@@ -35,7 +35,11 @@ const createWorkerMiddleware = (worker) => {
 
       return (action) => {
         if (action.meta && action.meta.WebWorker) {
-          worker.postMessage(action);
+          if (action.meta.transfer && action.meta.transfer instanceof Array) {
+            worker.postMessage(action, action.meta.transfer);
+          } else {
+            worker.postMessage(action);
+          }
         }
         // always pass the action along to the next middleware
         return next(action);
